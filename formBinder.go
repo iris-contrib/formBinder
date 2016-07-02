@@ -11,6 +11,17 @@ import (
 
 const tagName = "form"
 
+
+type Error struct {
+	err error
+}
+
+func (s *Error) Error() string {
+	return "Error while reading form: " + s.err.Error()
+}
+
+func newError(err error) *Error { return &Error{err} }
+
 // pathMap holds the values of a map with its key and values correspondent
 type pathMap struct {
 	ma    reflect.Value
@@ -480,7 +491,7 @@ func (dec *Decoder) decode() error {
 }
 
 // findStructField finds a field by its name, if it is not found,
-// then retry the search examining the tag "formam" of every field of struct
+// then retry the search examining the tag "form" of every field of struct
 func (dec *Decoder) findStructField() error {
 	var anon reflect.Value
 
@@ -505,7 +516,7 @@ func (dec *Decoder) findStructField() error {
 			anon = dec.curr
 			dec.curr = tmp
 		} else if dec.field == field.Tag.Get(dec.opts.TagName) {
-			// is not found yet, then retry by its tag name "formam"
+			// is not found yet, then retry by its tag name "form"
 			dec.curr = dec.curr.Field(i)
 			return nil
 		}

@@ -458,7 +458,15 @@ func (dec *Decoder) decode() error {
 	case reflect.Struct:
 		switch dec.curr.Interface().(type) {
 		case time.Time:
-			t, err := time.Parse("2006-01-02", dec.values[0])
+			d := dec.values[0]
+			var t time.Time
+			var err error
+			// Parsing RFC3339 is ~3 times more expensive than "2006-01-02", check first if it complies, then attempt best route
+			if len(d) > 10 && d[10] == 'T' {
+				t, err = time.Parse(time.RFC3339, d)
+			} else {
+				t, err = time.Parse("2006-01-02", d)
+			}
 			if err != nil {
 				return newError(fmt.Errorf("the value of field \"%v\" in path \"%v\" is not a valid datetime", dec.field, dec.path))
 			}

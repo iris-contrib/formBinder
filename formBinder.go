@@ -155,9 +155,7 @@ func (dec Decoder) init() error {
 		dec.values = v
 		dec.curr = dec.main
 		if len(dec.values) > 0 {
-			if err := dec.analyzePath(); err != nil {
-				return err
-			}
+			dec.analyzePath()
 		}
 	}
 	// set values of maps

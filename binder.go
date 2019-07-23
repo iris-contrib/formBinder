@@ -545,7 +545,7 @@ func (dec *Decoder) findStructField() error {
 	if dec.opts.IgnoreUnknownKeys {
 		return nil
 	}
-	return newError("could not find the field %q in the path %q", dec.field, dec.path)
+	return ErrPath{field: dec.field}
 }
 
 // expandSlice expands the length and capacity of the current slice
